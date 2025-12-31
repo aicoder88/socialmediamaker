@@ -1,134 +1,100 @@
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Facebook, Linkedin, Twitter, Instagram, BookOpen } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  PLATFORM_CHARACTER_LIMITS,
+  PLATFORM_CONFIG,
+  type PlatformType,
+} from "@/constants/platformLimits";
 
 interface PlatformPreviewCardProps {
-  platform: "facebook" | "linkedin" | "twitter" | "instagram" | "blog";
+  platform: PlatformType;
   content: string;
-  title?: string;
-  estimatedEngagement?: number;
   characterLimit?: number;
-  imageUrl?: string;
+  title?: string;
 }
 
-const PlatformPreviewCard = ({
-  platform = "facebook",
-  content = "This is a preview of how your content will appear on this platform. The formatting and character limits are specific to each social media platform.",
-  title = "Content Preview",
-  estimatedEngagement = 120,
-  characterLimit = 280,
-  imageUrl,
-}: PlatformPreviewCardProps) => {
-  // Platform-specific configurations
-  const platformConfig = {
-    facebook: {
-      icon: <Facebook className="h-5 w-5" />,
-      name: "Facebook",
-      color: "bg-blue-600",
-      textColor: "text-blue-600",
-      borderColor: "border-blue-600/20",
-      characterLimit: 63206,
-    },
-    linkedin: {
-      icon: <Linkedin className="h-5 w-5" />,
-      name: "LinkedIn",
-      color: "bg-blue-700",
-      textColor: "text-blue-700",
-      borderColor: "border-blue-700/20",
-      characterLimit: 3000,
-    },
-    twitter: {
-      icon: <Twitter className="h-5 w-5" />,
-      name: "Twitter",
-      color: "bg-sky-500",
-      textColor: "text-sky-500",
-      borderColor: "border-sky-500/20",
-      characterLimit: 280,
-    },
-    instagram: {
-      icon: <Instagram className="h-5 w-5" />,
-      name: "Instagram",
-      color: "bg-pink-600",
-      textColor: "text-pink-600",
-      borderColor: "border-pink-600/20",
-      characterLimit: 2200,
-    },
-    blog: {
-      icon: <BookOpen className="h-5 w-5" />,
-      name: "Blog",
-      color: "bg-emerald-600",
-      textColor: "text-emerald-600",
-      borderColor: "border-emerald-600/20",
-      characterLimit: 100000,
-    },
-  };
+const platformIcons = {
+  facebook: <Facebook className="h-5 w-5" />,
+  linkedin: <Linkedin className="h-5 w-5" />,
+  twitter: <Twitter className="h-5 w-5" />,
+  instagram: <Instagram className="h-5 w-5" />,
+  blog: <BookOpen className="h-5 w-5" />,
+};
 
-  const config = platformConfig[platform];
+const PlatformPreviewCard: React.FC<PlatformPreviewCardProps> = ({
+  platform,
+  content,
+  characterLimit,
+  title = "",
+}) => {
+  const limit = characterLimit ?? PLATFORM_CHARACTER_LIMITS[platform];
   const truncatedContent =
-    content.length > characterLimit
-      ? `${content.substring(0, characterLimit - 3)}...`
-      : content;
+    content.length > limit ? content.substring(0, limit) + "..." : content;
 
+  const config = PLATFORM_CONFIG[platform];
+  const icon = platformIcons[platform];
   const charactersUsed = content.length;
-  const percentUsed = Math.min(
-    Math.round((charactersUsed / config.characterLimit) * 100),
-    100,
-  );
+  const percentUsed = Math.min(Math.round((charactersUsed / limit) * 100), 100);
 
   return (
-    <Card
-      className={`w-full h-full bg-background/60 backdrop-blur-md border ${config.borderColor} shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden`}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`relative overflow-hidden rounded-xl border ${config.borderColor} ${config.bgColor} backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300`}
     >
-      <CardContent className="p-4 h-full flex flex-col">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className={`${config.color} p-1.5 rounded-full text-white`}>
-              {config.icon}
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${config.gradient} opacity-5`}
+      />
+
+      <div className="relative p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div
+              className={`p-2 rounded-lg bg-gradient-to-br ${config.gradient} text-white shadow-lg`}
+            >
+              {icon}
             </div>
-            <h3 className={`font-medium ${config.textColor}`}>{config.name}</h3>
+            <div>
+              <h3 className={`font-semibold ${config.textColor}`}>
+                {config.name}
+              </h3>
+              <p className="text-xs text-gray-400">Preview</p>
+            </div>
           </div>
           <Badge
             variant="outline"
-            className={`${config.textColor} ${config.borderColor}`}
+            className={`${config.textColor} ${config.borderColor} bg-transparent`}
           >
-            {percentUsed}% used
+            {percentUsed}%
           </Badge>
         </div>
 
         {platform === "blog" && title && (
-          <h4 className="text-sm font-semibold mb-2 text-foreground">
-            {title}
-          </h4>
+          <h4 className="text-lg font-bold mb-3 text-white">{title}</h4>
         )}
 
-        <div className="flex-1 overflow-hidden">
-          <p className="text-xs text-muted-foreground line-clamp-6">
-            {truncatedContent}
+        <div className="mb-4">
+          <p className="text-sm text-gray-300 leading-relaxed line-clamp-4">
+            {truncatedContent || "No content to preview"}
           </p>
         </div>
 
-        {imageUrl && (
-          <div className="mt-3 h-20 w-full overflow-hidden rounded-md">
-            <img
-              src={
-                imageUrl ||
-                "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=300&q=80"
-              }
-              alt="Preview image"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-
-        <div className="mt-3 flex justify-between items-center text-xs text-muted-foreground">
+        <div className="flex justify-between items-center text-xs text-gray-400">
           <span>
-            {charactersUsed} / {config.characterLimit} characters
+            {charactersUsed.toLocaleString()} / {limit.toLocaleString()}
           </span>
-          <span>Est. engagement: {estimatedEngagement}</span>
+          <div className="flex items-center gap-1">
+            <div
+              className={`w-2 h-2 rounded-full ${percentUsed > 90 ? "bg-red-400" : percentUsed > 70 ? "bg-yellow-400" : "bg-green-400"}`}
+            />
+            <span>{percentUsed > 90 ? "Near limit" : "Good"}</span>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </motion.div>
   );
 };
 
