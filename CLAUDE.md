@@ -42,7 +42,7 @@ npm run types:supabase  # Generate TypeScript types from Supabase schema
 - **Forms**: React Hook Form with Zod validation
 - **Animations**: Framer Motion
 - **Backend**: Supabase (@supabase/supabase-js)
-- **Dev Tools**: Tempo Devtools for component development
+- **Dev Tools**: ESLint for code quality
 
 ### Project Structure
 
@@ -57,8 +57,7 @@ src/
 │   └── home.tsx         # Main layout with sidebar and navigation
 ├── lib/
 │   └── utils.ts         # Utility functions (cn() for className merging)
-├── stories/             # Tempo storybook files for UI components
-├── tempobook/           # Dynamic Tempo assets (gitignored)
+├── stories/             # Storybook files for UI components
 ├── types/
 │   └── supabase.ts      # Auto-generated Supabase types
 ├── App.tsx              # Root component with routing
@@ -85,17 +84,11 @@ src/
    - Dark mode support via class strategy
    - Custom Tailwind theme extensions in `tailwind.config.js`
 
-4. **Tempo Integration**:
-   - Tempo devtools enabled via `tempo-devtools` package
-   - Component stories in `src/stories/` for isolated development
-   - Tempo routes conditionally loaded when `VITE_TEMPO=true`
-   - Typography system defined in `tempo.config.json`
-
-5. **State Management**:
+4. **State Management**:
    - Local component state with React hooks
    - No global state management library (uses React Context if needed)
 
-6. **Styling Utilities**:
+5. **Styling Utilities**:
    - `cn()` helper combines clsx and tailwind-merge for conditional classes
    - Framer Motion for animations and transitions
 
@@ -109,21 +102,11 @@ src/
 - **Vite**:
   - Base path configurable via `VITE_BASE_PATH` env var
   - Path aliasing for `@/*` imports
-  - Tempo devtools plugin integrated
   - SWC used for React fast refresh (faster than Babel)
 
 - **Supabase**:
   - Types must be regenerated when database schema changes
   - Project ID required in environment for type generation
-
-### Component Development with Tempo
-
-The project uses Tempo Devtools for isolated component development:
-
-1. Stories are located in `src/stories/` with `.stories.tsx` extension
-2. Tempo UI is conditionally loaded in production based on `VITE_TEMPO` env var
-3. Run `npm run dev` and access Tempo routes when enabled
-4. Dynamic Tempo assets are gitignored (`tempobook/dynamic/`, `tempobook/storyboards/`)
 
 ### Styling Conventions
 

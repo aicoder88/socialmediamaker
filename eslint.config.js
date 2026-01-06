@@ -82,7 +82,6 @@ export default [
       ".git/**",
       "*.config.js",
       "*.config.ts",
-      "tempobook/**",
     ],
   },
 ];
